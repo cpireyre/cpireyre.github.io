@@ -1,0 +1,6 @@
+Wed Sep 24 12:13:02 EEST 2025
+* deploy on github pages
+* playable prototype
+use BABYLON.PhysicsRaycastResult() for collision?
+debug display (fps, keys, pos, etc)
+brett victor style live editable state for e.g. colors
