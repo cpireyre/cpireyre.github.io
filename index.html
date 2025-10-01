@@ -13,8 +13,14 @@ body {
 <body>
   <!-- Babylon.js (Apache 2.0 License) - https://github.com/BabylonJS -->
   <script src="./babylon.max.js"></script>
-  <h2>Controls: <kbd>W</kbd><kbd>S</kbd>, <kbd>I</kbd><kbd>K</kbd></h2>
+  <h1>Controls: <kbd>W</kbd><kbd>S</kbd>, <kbd>I</kbd><kbd>K</kbd></h1>
+  <h1 id="score-card"></h1>
   <canvas width="640" height="480" id="canvas"></canvas>
+  <ul>
+    <li><input value="100" type="range" id="red">Red</input></li>
+    <li><input value="100" type="range" id="green">Green</input></li>
+    <li><input value="100" type="range" id="blue">Blue</input></li>
+  </ul>
   <script src="./game.js"></script>
 </body>
 </html>
