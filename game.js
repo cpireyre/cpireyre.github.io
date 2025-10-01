@@ -84,11 +84,11 @@ function update(current_time_ms) {
     minZ: p2.z - PADDLE_HEIGHT/2,
     maxZ: p2.z + PADDLE_HEIGHT/2,
   };
-  if (intersect(ball_pos, box1)) {
+  if (ball_dir > 0 && intersect(ball_pos, box1)) {
     ball_dir *= -1;
     perturbation = 0.5 - Math.random();
   }
-  if (intersect(ball_pos, box2)) {
+  if (ball_dir < 0 && intersect(ball_pos, box2)) {
     ball_dir *= -1;
     perturbation = 0.5 - Math.random();
   }
