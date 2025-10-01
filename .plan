@@ -6,3 +6,17 @@ debug display (fps, keys, pos, etc)
 brett victor style live editable state for e.g. colors
 tigerbeetle style dependency injection for inputs etc
 rich hickey style rule-based engine?
+
+Wed Oct  1 13:35:09 EEST 2025
+* better collision logic
+* use emissiveColor and mirrorMaterial
+* live edit object color
+* display current score
+pop-up editor would be cooler and less intrusive
+bounce physics still fake
+code a mess
+mirrorMaterial performance considerations?
+save color settings etc. to local storage
+slider for ball speed (good for debug)
+accelerate during game
+try some post processing shaders?
