@@ -4,27 +4,26 @@ const PLAYING_FIELD_WIDTH  = 20;
 const PLAYING_FIELD_HEIGHT = 15;
 
 G = {
-  p1: {
-    x: 8.5, z: 0,
-    score: 0,
-    height: 2.6, width: 0.2,
-    speed: 15,
-  },
-  p2: {
-    x: -8.5, z: 0,
-    score: 0,
-    speed: 15,
-    height: 2.6, width: 0.2,
-  },
+  height: PLAYING_FIELD_WIDTH, width: PLAYING_FIELD_WIDTH,
   ball: {
     diameter: 0.7,
-    speed: 0.25,
     dir: {x: 1, z: 0},
-    x: 0,
-    z: 0,
+    get radius() { return this.diameter / 2; },
+    speed: 15,
+    x: 0, z: 0,
   },
-  width: PLAYING_FIELD_WIDTH,
-  height: PLAYING_FIELD_WIDTH,
+  p1: {
+    height: 2.6, width: 0.2,
+    score: 0,
+    speed: 20,
+    x: 8.5, z: 0,
+  },
+  p2: {
+    height: 2.6, width: 0.2,
+    score: 0,
+    speed: 20,
+    x: -8.5, z: 0,
+  },
 };
 
 b = BABYLON; v3 = BABYLON.Vector3;
@@ -34,19 +33,19 @@ S  = new b.Scene(Engine);
 S.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
 function intersect(ball, p) {
-  const W = p.width; H = p.height / 2;
+  const W = p.width;
+  const H = p.height / 2;
   const x = Math.max(p.x - W, Math.min(ball.x, p.x + W));
   const z = Math.max(p.z - H, Math.min(ball.z, p.z + H));
   const distance = (x - ball.x)**2 + (z - ball.z)**2;
 
-  return distance < (G.ball.diameter / 2)**2;
+  return distance < G.ball.radius**2;
 }
 
 function collide(ball, p) {
   if (intersect(ball, p)) {
     ball.dir.x *= -1;
-    const hitPosition = (p.z - ball.z) / p.height;
-    ball.dir.z = -hitPosition;
+    ball.dir.z = (2 / p.height) * (ball.z - p.z);
   }
 }
 
@@ -89,22 +88,21 @@ last_time_ms = 0;
 
 function update(current_time_ms) {
   const delta_ms = (current_time_ms - last_time_ms) / 1000;
-  if (keys_down.has('KeyW') && G.p1.z > -3.9)
-    G.p1.z -= delta_ms * G.p1.speed;
-  if (keys_down.has('KeyS') && G.p1.z < 3.9)
-    G.p1.z += delta_ms * G.p1.speed;
-  if (keys_down.has('KeyI') && G.p2.z > -3.9)
-    G.p2.z -= delta_ms * G.p2.speed;
-  if (keys_down.has('KeyK') && G.p2.z < 3.9)
-    G.p2.z += delta_ms * G.p2.speed;
   last_time_ms = current_time_ms;
+  if (keys_down.has('KeyW') && G.p1.z > -5)
+    G.p1.z -= delta_ms * G.p1.speed;
+  if (keys_down.has('KeyS') && G.p1.z < 5)
+    G.p1.z += delta_ms * G.p1.speed;
+  if (keys_down.has('KeyI') && G.p2.z > -5)
+    G.p2.z -= delta_ms * G.p2.speed;
+  if (keys_down.has('KeyK') && G.p2.z < 5)
+    G.p2.z += delta_ms * G.p2.speed;
   if (G.ball.dir.x > 0) collide(G.ball, G.p1);
   if (G.ball.dir.x < 0) collide(G.ball, G.p2);
-  G.ball.x += G.ball.speed * G.ball.dir.x;
-  G.ball.z += G.ball.speed * G.ball.dir.z;
+  G.ball.x += G.ball.speed * delta_ms * G.ball.dir.x;
+  G.ball.z += G.ball.speed * delta_ms * G.ball.dir.z;
   if (Math.abs(G.ball.z) > 6.3)
   {
-    console.log(G.ball.z);
     if (G.ball.dir.z < 0 && G.ball.z < 0) G.ball.dir.z *= -1;
     if (G.ball.dir.z > 0 && G.ball.z > 0) G.ball.dir.z *= -1;
   }
