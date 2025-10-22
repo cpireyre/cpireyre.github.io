@@ -26,10 +26,19 @@ G = {
   },
 };
 
-b = BABYLON; v3 = BABYLON.Vector3;
+function move(v, u, speed, dt) {
+  if (u.x === undefined) u.x = 0;
+  if (u.z === undefined) u.z = 0;
+  v.x += u.x * speed * dt;
+  v.z += u.z * speed * dt;
+  return (v);
+}
 
-Engine = new b.Engine(document.getElementById("canvas"));
-S  = new b.Scene(Engine);
+b = BABYLON; v3 = BABYLON.Vector3;
+const canvas = document.getElementById("canvas");
+
+Engine = new b.Engine(canvas);
+S = new b.Scene(Engine);
 S.clearColor = new BABYLON.Color4(0, 0, 0, 0);
 
 function intersect(ball, p) {
@@ -38,7 +47,6 @@ function intersect(ball, p) {
   const x = Math.max(p.x - W, Math.min(ball.x, p.x + W));
   const z = Math.max(p.z - H, Math.min(ball.z, p.z + H));
   const distance = (x - ball.x)**2 + (z - ball.z)**2;
-
   return distance < G.ball.radius**2;
 }
 
@@ -60,29 +68,24 @@ S.ground.position = new v3(0,-1,0);
 S.light3 = new b.PointLight("light3", new v3(0, 2, 0), S);
 S.light3.intensity = 0.1;
 
-S.lpaddle = b.MeshBuilder.CreateCapsule("lpaddle", {
-  height: G.p1.height,
-  radius: G.p1.width,
-  orientation: new v3(0, 0, 1)
-},
-  S);
-S.rpaddle = b.MeshBuilder.CreateCapsule("rpaddle", {
-  height: G.p2.height,
-  radius: G.p2.width,
-  orientation: new v3(0, 0, 1)
-},
-  S);
-S.lpaddle.material = new b.StandardMaterial("lpaddle_mat", S);
-S.rpaddle.material = new b.StandardMaterial("lpaddle_mat", S);
-S.sphere.material = new b.StandardMaterial("sphere_mat", S);
-paddleColor = new b.Color3(1,1,1);
-S.lpaddle.material.emissiveColor = paddleColor;
-S.rpaddle.material.emissiveColor = paddleColor;
-S.sphere.material.emissiveColor = paddleColor;
+Object.assign(S, {
+  lpaddle: b.MeshBuilder.CreateCapsule("lpaddle", {
+    height: G.p1.height, radius: G.p1.width, orientation: new v3(0, 0, 1)
+  }, S),
+  rpaddle: b.MeshBuilder.CreateCapsule("rpaddle", {
+    height: G.p2.height, radius: G.p2.width, orientation: new v3(0, 0, 1)
+  }, S)
+});
+
+const paddleColor = new b.Color3(1,1,1);
+[S.lpaddle, S.rpaddle, S.sphere].forEach(mesh => {
+  mesh.material = new b.StandardMaterial(`${mesh.name}_mat`, S);
+  mesh.material.emissiveColor = paddleColor;
+});
 
 keys_down = new Set();
-document.addEventListener('keydown', (e) => keys_down.add   (e.code));
-document.addEventListener('keyup',   (e) => keys_down.delete(e.code));
+document.addEventListener('keydown', (e) => keys_down.add(e.code));
+document.addEventListener('keyup', (e) => keys_down.delete(e.code));
 
 last_time_ms = 0;
 
@@ -90,38 +93,51 @@ function update(current_time_ms) {
   const delta_ms = (current_time_ms - last_time_ms) / 1000;
   last_time_ms = current_time_ms;
   if (keys_down.has('KeyW') && G.p1.z > -5)
-    G.p1.z -= delta_ms * G.p1.speed;
+    move(G.p1, {z: -1}, G.p1.speed, delta_ms);
   if (keys_down.has('KeyS') && G.p1.z < 5)
-    G.p1.z += delta_ms * G.p1.speed;
+    move(G.p1, {z: 1}, G.p1.speed, delta_ms);
   if (keys_down.has('KeyI') && G.p2.z > -5)
-    G.p2.z -= delta_ms * G.p2.speed;
+    move(G.p2, {z: -1}, G.p2.speed, delta_ms);
   if (keys_down.has('KeyK') && G.p2.z < 5)
-    G.p2.z += delta_ms * G.p2.speed;
+    move(G.p2, {z: 1}, G.p2.speed, delta_ms);
   if (G.ball.dir.x > 0) collide(G.ball, G.p1);
   if (G.ball.dir.x < 0) collide(G.ball, G.p2);
-  G.ball.x += G.ball.speed * delta_ms * G.ball.dir.x;
-  G.ball.z += G.ball.speed * delta_ms * G.ball.dir.z;
-  if (Math.abs(G.ball.z) > 6.3)
-  {
+  move(G.ball, G.ball.dir, G.ball.speed, delta_ms);
+  if (Math.abs(G.ball.z) > 6.3) {
     if (G.ball.dir.z < 0 && G.ball.z < 0) G.ball.dir.z *= -1;
     if (G.ball.dir.z > 0 && G.ball.z > 0) G.ball.dir.z *= -1;
   }
-  if (Math.abs(G.ball.x) > G.width / 2)
-  {
+  if (Math.abs(G.ball.x) > G.width / 2) {
     if (G.ball.x < 0) G.p1.score += 1;
     if (G.ball.x > 0) G.p2.score += 1;
     G.ball.z = 0; G.ball.x = 0;
   }
 }
 
+const container = Object.assign(document.createElement('div'), {
+  style: 'position:relative; display:inline-block'
+});
+const overlay = Object.assign(document.createElement('div'), {
+  style: 'position:absolute; top:0; left:0; width:100%;'
+       + 'height:100%; pointer-events:none; color:white;'
+       + 'font-family:monospace; font-size:24px; z-index:10'
+});
+const scoreDisplay = Object.assign(document.createElement('h1'), {
+  style: 'position:absolute; top:20px; left:50%;'
+       + 'transform:translateX(-50%); text-align:center'
+});
+
+canvas.parentNode.insertBefore(container, canvas);
+container.append(canvas, overlay);
+overlay.appendChild(scoreDisplay);
+
 function loop(current_time_ms) {
   update(current_time_ms);
-
-  S.lpaddle.position.set(G.p1.x,   0, G.p1.z);
-  S.rpaddle.position.set(G.p2.x,   0, G.p2.z);
-  S.sphere .position.set(G.ball.x, 0, G.ball.z);
-  S.light3 .position.set(G.ball.x, 1, G.ball.z);
-
+  scoreDisplay.textContent = `${G.p1.score} | ${G.p2.score}`;
+  S.lpaddle.position.set(G.p1.x, 0, G.p1.z);
+  S.rpaddle.position.set(G.p2.x, 0, G.p2.z);
+  S.sphere.position.set(G.ball.x, 0, G.ball.z);
+  S.light3.position.set(G.ball.x, 1, G.ball.z);
   S.render();
   requestAnimationFrame(loop);
 }
