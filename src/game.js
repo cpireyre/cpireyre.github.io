@@ -4,6 +4,7 @@ import { createScene } from "./render.js";
 const PLAYING_FIELD_WIDTH  = 20;
 const PLAYING_FIELD_HEIGHT = 15;
 const WINNING_SCORE        = 11; // 11 for real gameplay
+let   g_LAST_TIME_MS       = 0;
 
 const States = Object.freeze({
   START:      Symbol('start'),
@@ -66,7 +67,6 @@ const keys_down = new Set();
 document.addEventListener('keydown', (e) => keys_down.add(e.code));
 document.addEventListener('keyup', (e) => keys_down.delete(e.code));
 
-let last_time_ms = 0;
 
 function update(delta_ms, keys_down) {
   switch (G.state)
@@ -154,8 +154,8 @@ container.appendChild(startButton);
 
 const S = createScene(canvas, G, PLAYING_FIELD_HEIGHT);
 function loop(current_time_ms) {
-  const delta_ms = (current_time_ms - last_time_ms) / 1000;
-  last_time_ms = current_time_ms;
+  const delta_ms = (current_time_ms - g_LAST_TIME_MS) / 1000;
+  g_LAST_TIME_MS = current_time_ms;
   update(delta_ms, keys_down);
   scoreDisplay.textContent = `${G.p1.score} | ${G.p2.score}`;
   switch (G.state) {
@@ -181,7 +181,7 @@ requestAnimationFrame(loop);
 
 
 function xhrPost(url, body) {
-  req = new XMLHttpRequest();
+  const req = new XMLHttpRequest();
   req.open("POST", url); // Nonblocking by default these days
   req.send(JSON.stringify(body));
 }
