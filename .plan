@@ -20,3 +20,9 @@ save color settings etc. to local storage
 slider for ball speed (good for debug)
 accelerate during game
 try some post processing shaders?
+
+Sat Oct 25 17:48:15 EEST 2025
+* (added state machine and stuff before)
+* extracted ui and render code into es6 modules
+* broke state transitions in the process
+* moved files into /lib and /src

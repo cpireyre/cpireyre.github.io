@@ -40,10 +40,10 @@ export function createRenderer(canvas, G, playingFieldHeight) {
   const S = createScene(canvas, G, playingFieldHeight);
 
   return function render(G) {
-    S.lpaddle.position.set(G.p1.x, 0, G.p1.z);
-    S.rpaddle.position.set(G.p2.x, 0, G.p2.z);
-    S.sphere.position.set(G.ball.x, 0, G.ball.z);
-    S.light3.position.set(G.ball.x, 1, G.ball.z);
+    S.lpaddle.position.set(G.p1.x,   0, G.p1.z);
+    S.rpaddle.position.set(G.p2.x,   0, G.p2.z);
+    S.sphere.position.set (G.ball.x, 0, G.ball.z);
+    S.light3.position.set (G.ball.x, 1, G.ball.z);
     S.render();
   };
 }
