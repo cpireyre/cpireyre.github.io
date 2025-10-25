@@ -1,4 +1,4 @@
-export function createScene(canvas, G, playingFieldHeight)
+function createScene(canvas, G)
 {
   const b = BABYLON; const v3 = BABYLON.Vector3;
 
@@ -8,7 +8,7 @@ export function createScene(canvas, G, playingFieldHeight)
 
   S.camera = new b.FreeCamera("camera", new v3(0, 15, 8), S);
   S.ground = b.MeshBuilder.CreateGround("ground",
-    {width: G.width, height: playingFieldHeight}, S);
+    {width: G.width, height: G.height}, S);
   S.sphere = b.MeshBuilder.CreateSphere("sphere", {diameter: G.ball.diameter}, S);
 
   S.camera.setTarget(v3.Zero());
@@ -34,4 +34,16 @@ export function createScene(canvas, G, playingFieldHeight)
     mesh.material.emissiveColor = paddleColor;
   });
   return (S);
+}
+
+export function createRenderer(canvas, G, playingFieldHeight) {
+  const S = createScene(canvas, G, playingFieldHeight);
+
+  return function render(G) {
+    S.lpaddle.position.set(G.p1.x, 0, G.p1.z);
+    S.rpaddle.position.set(G.p2.x, 0, G.p2.z);
+    S.sphere.position.set(G.ball.x, 0, G.ball.z);
+    S.light3.position.set(G.ball.x, 1, G.ball.z);
+    S.render();
+  };
 }

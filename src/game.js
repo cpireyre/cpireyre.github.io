@@ -1,5 +1,5 @@
 "use strict mode";
-import { createScene } from "./render.js";
+import { createRenderer } from './render.js';
 
 const PLAYING_FIELD_WIDTH  = 20;
 const PLAYING_FIELD_HEIGHT = 15;
@@ -152,7 +152,7 @@ container.append(canvas, overlay);
 overlay.appendChild(scoreDisplay);
 container.appendChild(startButton);
 
-const S = createScene(canvas, G, PLAYING_FIELD_HEIGHT);
+const render = createRenderer(canvas, G);
 function loop(current_time_ms) {
   const delta_ms = (current_time_ms - g_LAST_TIME_MS) / 1000;
   g_LAST_TIME_MS = current_time_ms;
@@ -169,11 +169,7 @@ function loop(current_time_ms) {
       scoreDisplay.textContent = `Controls: WS, IK`
       break;
   }
-  S.lpaddle.position.set(G.p1.x, 0, G.p1.z);
-  S.rpaddle.position.set(G.p2.x, 0, G.p2.z);
-  S.sphere.position.set(G.ball.x, 0, G.ball.z);
-  S.light3.position.set(G.ball.x, 1, G.ball.z);
-  S.render();
+  render(G);
   requestAnimationFrame(loop);
 }
 
