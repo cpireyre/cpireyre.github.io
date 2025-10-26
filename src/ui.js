@@ -1,51 +1,69 @@
-export function createUI(canvas, STATES, onStartGame) {
-  const container = Object.assign(document.createElement('div'), {
-    style: 'position:relative; display:inline-block'
-  });
-  const overlay = Object.assign(document.createElement('div'), {
-    style: 'position:absolute; top:0; left:0; width:100%;'
-    + 'height:100%; pointer-events:none; color:white;'
-    + 'font-family:monospace; font-size:24px; z-index:10'
-  });
-  const scoreDisplay = Object.assign(document.createElement('h1'), {
-    style: 'position:absolute; top:20px; left:50%;'
-    + 'transform:translateX(-50%); text-align:center'
-  });
-  const startButtonStyle = 'position:absolute; top:200px; left:50%;'
-    + 'transform:translateX(-50%); text-align:center'
-    + 'pointer-events: auto; background-color: transparent;'
-    + 'color: white;'
-    + 'border: none; font-size: 4em;'
-    + 'font-family: monospace;'
-  ;
+/*jslint browser */
+const createUI = Object.freeze(
+    function (canvas, STATES, onStartGame) {
+        const container = Object.assign(document.createElement("div"), {
+            style: "position:relative; display:inline-block"
+        });
+        const overlay = Object.assign(document.createElement("div"), {
+            style: "position:absolute; top:0; left:0; width:100%;" +
+            "height:100%; pointer-events:none; color:white;" +
+            "font-family:monospace; font-size:24px; z-index:10"
+        });
+        const scoreDisplay = Object.assign(document.createElement("h1"), {
+            style: "position:absolute; top:20px; left:50%;"
+            + "transform:translateX(-50%); text-align:center"
+        });
+        const startButton = document.createElement("button");
+        Object.assign(startButton.style, {
+            backgroundColor: "transparent",
+            border: "none",
+            color: "white",
+            fontFamily: "monospace",
+            fontSize: "4em",
+            left: "50%",
+            pointerEvents: "auto",
+            position: "absolute",
+            textAlign: "center",
+            top: "200px",
+            transform: "translateX(-50%)"
+        });
+        startButton.innerHTML = `Click here`;
+        startButton.onclick = function () {
+            onStartGame();
+            startButton.style = "display: none;";
+        };
 
-  const startButton = Object.assign(document.createElement('button'), {
-    style: startButtonStyle});
-  startButton.innerHTML = `Click here`;
-  startButton.onclick = () => {
-    onStartGame();
-    startButton.style = "display: none;";
-  }
-
-  canvas.parentNode.insertBefore(container, canvas);
-  container.append(canvas, overlay);
-  overlay.appendChild(scoreDisplay);
-  container.appendChild(startButton);
-  function showScore(G) {
-    switch (G.state) {
-      case STATES.GAME_OVER:
-        {
-          let winner = G.p1.score > G.p2.score ? G.p1 : G.p2;
-          let loser  = G.p1.score < G.p2.score ? G.p1 : G.p2;
-          return `${winner.name} wins! ${winner.score} to ${loser.score}`;
+        canvas.parentNode.insertBefore(container, canvas);
+        container.append(canvas, overlay);
+        overlay.appendChild(scoreDisplay);
+        container.appendChild(startButton);
+        function showScore(G) {
+            switch (G.state) {
+            case STATES.GAME_OVER:
+                return showScoreString(G);
+            case STATES.START:
+                return `Controls: WS, IK`;
+            case STATES.PLAYING:
+                return `${G.p1.score} | ${G.p2.score}`;
+            }
         }
-      case STATES.START: return `Controls: WS, IK`;
-      case STATES.PLAYING: return `${G.p1.score} | ${G.p2.score}`;
-    }
-  }
 
-  return function updateUI(G) {
-    scoreDisplay.textContent = showScore(G);
-    if (G.state === STATES.GAME_OVER) startButton.style = "";
-  }
+        return function updateUI(G) {
+            scoreDisplay.textContent = showScore(G);
+            if (G.state === STATES.GAME_OVER) {
+                startButton.style = "";
+            }
+        };
+    }
+);
+
+export {createUI};
+
+function showScoreString(G) {
+    let winner = G.p1;
+    let loser = G.p2;
+    if (winner.score < loser.score) {
+        [winner, loser] = [loser, winner];
+    }
+    return `${winner.name} wins! ${winner.score} to ${loser.score}`;
 }
