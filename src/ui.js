@@ -3,29 +3,29 @@ const createUI = Object.freeze(
     function (canvas, STATES, onStartGame) {
         const container = document.createElement("div");
         Object.assign(container.style, {
-            position: "relative",
-            display: "inline-block"
+            display: "inline-block",
+            position: "relative"
         });
         const overlay = document.createElement("div");
         Object.assign(overlay.style, {
-            position: "absolute",
-            top: "0",
-            left: "0",
-            width: "100%",
-            height: "100%",
-            pointerEvents: "none",
             color: "white",
             fontFamily: "monospace",
             fontSize: "24px",
+            height: "100%",
+            left: "0",
+            pointerEvents: "none",
+            position: "absolute",
+            top: "0",
+            width: "100%",
             zIndex: "10"
         });
         const scoreDisplay = document.createElement("h1");
         Object.assign(scoreDisplay.style, {
-            position: "absolute",
-            top: "20px",
             left: "50%",
-            transform: "translateX(-50%)",
-            textAlign: "center"
+            position: "absolute",
+            textAlign: "center",
+            top: "20px",
+            transform: "translateX(-50%)"
         });
         const startButton = document.createElement("button");
         Object.assign(startButton.style, {
