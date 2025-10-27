@@ -26,3 +26,12 @@ Sat Oct 25 17:48:15 EEST 2025
 * extracted ui and render code into es6 modules
 * broke state transitions in the process
 * moved files into /lib and /src
+
+Mon Oct 27 15:21:12 EET 2025:
+* fixed start button state injection mess, kind of
+* avoided git nonsense with the PR
+don't know if i like how the modules are factored
+maybe update should take or return events?
+next thing is PR for the refactor
+next next thing is PR for the backend integration
+want to do best of 3 rather than best of 1 maybe?
