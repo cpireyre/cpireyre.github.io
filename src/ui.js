@@ -1,17 +1,31 @@
 /*jslint browser */
 const createUI = Object.freeze(
     function (canvas, STATES, onStartGame) {
-        const container = Object.assign(document.createElement("div"), {
-            style: "position:relative; display:inline-block"
+        const container = document.createElement("div");
+        Object.assign(container.style, {
+            position: "relative",
+            display: "inline-block"
         });
-        const overlay = Object.assign(document.createElement("div"), {
-            style: "position:absolute; top:0; left:0; width:100%;" +
-            "height:100%; pointer-events:none; color:white;" +
-            "font-family:monospace; font-size:24px; z-index:10"
+        const overlay = document.createElement("div");
+        Object.assign(overlay.style, {
+            position: "absolute",
+            top: "0",
+            left: "0",
+            width: "100%",
+            height: "100%",
+            pointerEvents: "none",
+            color: "white",
+            fontFamily: "monospace",
+            fontSize: "24px",
+            zIndex: "10"
         });
-        const scoreDisplay = Object.assign(document.createElement("h1"), {
-            style: "position:absolute; top:20px; left:50%;"
-            + "transform:translateX(-50%); text-align:center"
+        const scoreDisplay = document.createElement("h1");
+        Object.assign(scoreDisplay.style, {
+            position: "absolute",
+            top: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            textAlign: "center"
         });
         const startButton = document.createElement("button");
         Object.assign(startButton.style, {
