@@ -13,7 +13,8 @@ const WINNING_SCORE = 11;
 const STATES = Object.freeze({
     GAME_OVER: Symbol("game_over"),
     PLAYING: Symbol("playing"),
-    START: Symbol("start")
+    START: Symbol("start"),
+    WAITING: Symbol("waiting")
 });
 
 const G = {
@@ -27,6 +28,7 @@ const G = {
         x: 0,
         z: 0
     },
+    countdown: 0,
     height: PLAYING_FIELD_HEIGHT,
     p1: {
         height: 2.6,
@@ -138,11 +140,23 @@ function update(G, delta_ms, keys_down) {
 }
 
 const render = createRenderer(canvas, G);
-const updateUI = createUI(canvas, STATES, function () {
-    G.state = STATES.PLAYING;
-    G.p1.score = 0;
-    G.p2.score = 0;
-});
+
+function onThree(G) {
+    function countdown(G) {
+        if (G.countdown === 0) {
+            G.state = STATES.PLAYING;
+            G.p1.score = 0;
+            G.p2.score = 0;
+        } else {
+            G.countdown -= 1;
+            setTimeout(() => countdown(G), 1000);
+        }
+    }
+    G.countdown = 4;
+    G.state = STATES.WAITING;
+    countdown(G);
+}
+const updateUI = createUI(canvas, STATES, onThree);
 function loop(current_time_ms) {
     const delta_ms = (current_time_ms - g_LAST_TIME_MS) / 1000;
     g_LAST_TIME_MS = current_time_ms;

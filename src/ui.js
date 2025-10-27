@@ -30,7 +30,8 @@ const createUI = Object.freeze(
         const startButton = document.createElement("button");
         Object.assign(startButton.style, {
             backgroundColor: "transparent",
-            border: "none",
+            border: "1px solid white",
+            borderRadius: "7%",
             color: "white",
             fontFamily: "monospace",
             fontSize: "4em",
@@ -41,7 +42,7 @@ const createUI = Object.freeze(
             top: "200px",
             transform: "translateX(-50%)"
         });
-        startButton.innerHTML = `Click here`;
+        startButton.innerHTML = `Begin`;
         startButton.onclick = function () {
             onStartGame();
         };
@@ -58,16 +59,23 @@ const createUI = Object.freeze(
                 return `Controls: WS, IK`;
             case STATES.PLAYING:
                 return `${G.p1.score} | ${G.p2.score}`;
+            case STATES.WAITING:
+                return (
+                    G.countdown > 0
+                    ? `${G.countdown}`
+                    : "Get ready!"
+                );
             }
         }
 
         return function updateUI(G) {
             scoreDisplay.textContent = showScore(G);
-            if (G.state === STATES.PLAYING) {
-                startButton.style.display = "none";
-            } else {
+            if (G.state === STATES.START || G.state === STATES.GAME_OVER) {
                 startButton.style.display = "block";
+            } else {
+                startButton.style.display = "none";
             }
+            startButton.onclick = () => onStartGame(G);
         };
     }
 );
