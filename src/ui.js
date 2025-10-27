@@ -30,7 +30,6 @@ const createUI = Object.freeze(
         startButton.innerHTML = `Click here`;
         startButton.onclick = function () {
             onStartGame();
-            startButton.style = "display: none;";
         };
 
         canvas.parentNode.insertBefore(container, canvas);
@@ -50,8 +49,11 @@ const createUI = Object.freeze(
 
         return function updateUI(G) {
             scoreDisplay.textContent = showScore(G);
-            if (G.state === STATES.GAME_OVER) {
-                startButton.style = "";
+            if (G.state === STATES.PLAYING) {
+                startButton.style.display = "none";
+            }
+            else {
+                startButton.style.display = "block";
             }
         };
     }

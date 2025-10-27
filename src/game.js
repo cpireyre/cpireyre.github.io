@@ -82,12 +82,8 @@ const keys_down = new Set();
 document.addEventListener("keydown", (e) => keys_down.add(e.code));
 document.addEventListener("keyup", (e) => keys_down.delete(e.code));
 
-function update(delta_ms, keys_down) {
+function update(G, delta_ms, keys_down) {
     switch (G.state) {
-    case STATES.START:
-        G.p1.score = 0;
-        G.p2.score = 0;
-        break;
     case STATES.PLAYING:
         if (keys_down.has("KeyW") && G.p1.z > -5) {
             move(G.p1, {z: -1}, G.p1.speed, delta_ms);
@@ -144,11 +140,13 @@ function update(delta_ms, keys_down) {
 const render = createRenderer(canvas, G);
 const updateUI = createUI(canvas, STATES, function () {
     G.state = STATES.PLAYING;
+    G.p1.score = 0;
+    G.p2.score = 0;
 });
 function loop(current_time_ms) {
     const delta_ms = (current_time_ms - g_LAST_TIME_MS) / 1000;
     g_LAST_TIME_MS = current_time_ms;
-    update(delta_ms, keys_down);
+    update(G, delta_ms, keys_down);
     updateUI(G);
     render(G);
     requestAnimationFrame(loop);
