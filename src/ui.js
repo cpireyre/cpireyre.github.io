@@ -29,7 +29,7 @@ const createUI = Object.freeze(
         });
         const startButton = document.createElement("button");
         Object.assign(startButton.style, {
-            backgroundColor: "transparent",
+            backgroundColor: "grey",
             border: "1px solid white",
             borderRadius: "7%",
             color: "white",
