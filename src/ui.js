@@ -51,8 +51,7 @@ const createUI = Object.freeze(
             scoreDisplay.textContent = showScore(G);
             if (G.state === STATES.PLAYING) {
                 startButton.style.display = "none";
-            }
-            else {
+            } else {
                 startButton.style.display = "block";
             }
         };
