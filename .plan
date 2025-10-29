@@ -44,3 +44,10 @@ dark mode should literally dim the lights
 * make serve more predictable (reset z, alternate x)
 * let paddles move in waiting state
 be cool if ball accelerated slowly at start of round
+* add ball acceleration
+* add bo3
+* add spheres w/ shaders to show round and score
+update other repo too
+feel like it's been dropping frames
+could refactor scoreratio w/ accessor property % jslint
+ball acceleration maybe needs playtesting but it's fine
