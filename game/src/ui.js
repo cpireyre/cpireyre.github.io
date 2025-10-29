@@ -52,14 +52,13 @@ const createUI = Object.freeze(
         overlay.appendChild(scoreDisplay);
         container.appendChild(startButton);
         function showScore(G) {
-            let currentRound = G.p1.roundsWon + G.p2.roundsWon + 1;
             switch (G.state) {
             case STATES.GAME_OVER:
                 return showScoreString(G);
             case STATES.START:
                 return `Controls: WS, IK`;
             case STATES.PLAYING:
-                return `Round ${currentRound}: ${G.p1.score} | ${G.p2.score}`;
+                return ``;
             case STATES.WAITING:
                 return (
                     G.countdown > 0
