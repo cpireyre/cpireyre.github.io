@@ -41,3 +41,6 @@ paddles should move in waiting state
 still need to fix serve
 implement bo3
 dark mode should literally dim the lights
+* make serve more predictable (reset z, alternate x)
+* let paddles move in waiting state
+be cool if ball accelerated slowly at start of round

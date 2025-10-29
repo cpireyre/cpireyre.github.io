@@ -19,12 +19,14 @@ const STATES = Object.freeze({
 
 const G = {
     ball: {
+        acceleration: 0.5,
         diameter: 0.7,
         dir: {
             x: 1,
             z: 0
         },
-        speed: 15,
+        speed: 0,
+        topSpeed: 15,
         x: 0,
         z: 0
     },
@@ -112,6 +114,9 @@ function update(G, delta_ms, keys_down) {
         if (G.ball.dir.x < 0) {
             collide(G.ball, G.p2);
         }
+        if (G.ball.speed < G.ball.topSpeed) {
+            G.ball.speed += G.ball.acceleration;
+        }
         move(G.ball, G.ball.dir, G.ball.speed, delta_ms);
         if (Math.abs(G.ball.z) > 6.3) {
             if (G.ball.dir.z < 0 && G.ball.z < 0) {
@@ -128,8 +133,11 @@ function update(G, delta_ms, keys_down) {
             if (G.ball.x > 0) {
                 G.p2.score += 1;
             }
+            G.ball.speed = 0;
             G.ball.z = 0;
             G.ball.x = 0;
+            G.ball.dir.x = (-1) ** (G.p1.score + G.p2.score);
+            G.ball.dir.z = 0;
         }
         // This logic needs to move to a transition state
         if (Math.max(G.p1.score, G.p2.score) >= WINNING_SCORE) {
