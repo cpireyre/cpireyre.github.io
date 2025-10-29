@@ -84,21 +84,28 @@ const keys_down = new Set();
 document.addEventListener("keydown", (e) => keys_down.add(e.code));
 document.addEventListener("keyup", (e) => keys_down.delete(e.code));
 
+function movePlayers(G, delta_ms, keys_down) {
+    if (keys_down.has("KeyW") && G.p1.z > -5) {
+        move(G.p1, {z: -1}, G.p1.speed, delta_ms);
+    }
+    if (keys_down.has("KeyS") && G.p1.z < 5) {
+        move(G.p1, {z: 1}, G.p1.speed, delta_ms);
+    }
+    if (keys_down.has("KeyI") && G.p2.z > -5) {
+        move(G.p2, {z: -1}, G.p2.speed, delta_ms);
+    }
+    if (keys_down.has("KeyK") && G.p2.z < 5) {
+        move(G.p2, {z: 1}, G.p2.speed, delta_ms);
+    }
+}
+
 function update(G, delta_ms, keys_down) {
     switch (G.state) {
+    case STATES.WAITING:
+        movePlayers(G, delta_ms, keys_down);
+        break;
     case STATES.PLAYING:
-        if (keys_down.has("KeyW") && G.p1.z > -5) {
-            move(G.p1, {z: -1}, G.p1.speed, delta_ms);
-        }
-        if (keys_down.has("KeyS") && G.p1.z < 5) {
-            move(G.p1, {z: 1}, G.p1.speed, delta_ms);
-        }
-        if (keys_down.has("KeyI") && G.p2.z > -5) {
-            move(G.p2, {z: -1}, G.p2.speed, delta_ms);
-        }
-        if (keys_down.has("KeyK") && G.p2.z < 5) {
-            move(G.p2, {z: 1}, G.p2.speed, delta_ms);
-        }
+        movePlayers(G, delta_ms, keys_down);
         if (G.ball.dir.x > 0) {
             collide(G.ball, G.p1);
         }
