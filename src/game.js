@@ -7,9 +7,6 @@ import {createUI} from "./ui.js";
 let g_LAST_TIME_MS = 0;
 
 const canvas = document.getElementById("canvas");
-const PLAYING_FIELD_HEIGHT = 15;
-const PLAYING_FIELD_WIDTH = 20;
-const WINNING_SCORE = 11;
 const STATES = Object.freeze({
     GAME_OVER: Symbol("game_over"),
     PLAYING: Symbol("playing"),
@@ -31,7 +28,7 @@ const G = {
         z: 0
     },
     countdown: 0,
-    height: PLAYING_FIELD_HEIGHT,
+    height: 15,
     p1: {
         height: 2.6,
         name: "Player 1",
@@ -51,7 +48,8 @@ const G = {
         z: 0
     },
     state: STATES.START,
-    width: PLAYING_FIELD_WIDTH
+    width: 20,
+    winningScore: 11
 };
 
 function move(v, u, speed, dt) {
@@ -79,6 +77,9 @@ function collide(ball, p) {
     if (intersect(ball, p)) {
         ball.dir.x *= -1;
         ball.dir.z = (2 / p.height) * (ball.z - p.z);
+        if (ball.speed < ball.topSpeed * 3) {
+            ball.speed += ball.acceleration;
+        }
     }
 }
 
@@ -140,7 +141,7 @@ function update(G, delta_ms, keys_down) {
             G.ball.dir.z = 0;
         }
         // This logic needs to move to a transition state
-        if (Math.max(G.p1.score, G.p2.score) >= WINNING_SCORE) {
+        if (Math.max(G.p1.score, G.p2.score) >= G.winningScore) {
             G.state = STATES.GAME_OVER;
             // setTimeout(() => G.state = STATES.START, 3000);
             xhrPost("https://echo.free.beeceptor.com", {
