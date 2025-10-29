@@ -35,3 +35,9 @@ maybe update should take or return events?
 next thing is PR for the refactor
 next next thing is PR for the backend integration
 want to do best of 3 rather than best of 1 maybe?
+
+Wed Oct 29 08:58:26 EET 2025
+paddles should move in waiting state
+still need to fix serve
+implement bo3
+dark mode should literally dim the lights
