@@ -1,18 +1,34 @@
 /*jslint browser */
 /*global BABYLON */
 
-const createGround = BABYLON.MeshBuilder.CreateGround;
-const createSphere = BABYLON.MeshBuilder.CreateSphere;
-const createCapsule = BABYLON.MeshBuilder.CreateCapsule;
+const B = BABYLON;
+const V3 = BABYLON.Vector3;
+const createGround = B.MeshBuilder.CreateGround;
+const createSphere = B.MeshBuilder.CreateSphere;
+const createCapsule = B.MeshBuilder.CreateCapsule;
 const zeroVector = BABYLON.Vector3.Zero;
 
 function createScene(canvas, G) {
-    const B = BABYLON;
-    const V3 = BABYLON.Vector3;
 
     const Engine = new B.Engine(canvas);
     const S = new B.Scene(Engine);
-    S.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+    S.clearColor = new B.Color4(0, 0, 0, 0);
+    S.shaderMaterial = new B.ShaderMaterial(
+        "shader",
+        S,
+        "./shader/victoryShader",
+        {
+            attributes: ["position", "normal", "uv"],
+            uniforms: [
+                "world",
+                "worldView",
+                "worldViewProjection",
+                "view",
+                "projection",
+                "scoreRatio"
+            ]
+        }
+    );
 
     S.camera = new B.FreeCamera("camera", new V3(0, 15, 8), S);
     S.ground = createGround("ground", {
@@ -47,6 +63,25 @@ function createScene(canvas, G) {
         mesh.material = new B.StandardMaterial(`${mesh.name}_mat`, S);
         mesh.material.emissiveColor = paddleColor;
     });
+
+    S.victorySpheres = [
+        createSphere("victorySphere1", {
+            diameter: G.ball.diameter
+        }, S),
+
+        createSphere("victorySphere1", {
+            diameter: G.ball.diameter
+        }, S),
+        createSphere("victorySphere1", {
+            diameter: G.ball.diameter
+        }, S),
+        createSphere("victorySphere1", {
+            diameter: G.ball.diameter
+        }, S)
+    ];
+    S.victorySpheres.forEach(function (mesh) {
+        mesh.material = S.shaderMaterial;
+    });
     return (S);
 }
 
@@ -55,10 +90,15 @@ const createRenderer = Object.freeze(
         const S = createScene(canvas, G);
 
         return function render(G) {
+            S.shaderMaterial.setFloat("scoreRatio", G.p1.score / G.winningScore);
             S.lpaddle.position.set(G.p1.x, 0, G.p1.z);
             S.rpaddle.position.set(G.p2.x, 0, G.p2.z);
             S.sphere.position.set(G.ball.x, 0, G.ball.z);
             S.light3.position.set(G.ball.x, 1, G.ball.z);
+            S.victorySpheres[0].position.set(-10, 0, 0);
+            S.victorySpheres[1].position.set(-10, 0, 1);
+            S.victorySpheres[2].position.set(10, 0, 0);
+            S.victorySpheres[3].position.set(10, 0, 1);
             S.render();
         };
     }

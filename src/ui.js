@@ -52,13 +52,14 @@ const createUI = Object.freeze(
         overlay.appendChild(scoreDisplay);
         container.appendChild(startButton);
         function showScore(G) {
+            let currentRound = G.p1.roundsWon + G.p2.roundsWon;
             switch (G.state) {
             case STATES.GAME_OVER:
                 return showScoreString(G);
             case STATES.START:
                 return `Controls: WS, IK`;
             case STATES.PLAYING:
-                return `${G.p1.score} | ${G.p2.score}`;
+                return `Round ${currentRound}: ${G.p1.score} | ${G.p2.score}`;
             case STATES.WAITING:
                 return (
                     G.countdown > 0
@@ -88,5 +89,5 @@ function showScoreString(G) {
     if (winner.score < loser.score) {
         [winner, loser] = [loser, winner];
     }
-    return `${winner.name} wins! ${winner.score} to ${loser.score}`;
+    return `${winner.name} wins! ${winner.roundsWon} to ${loser.roundsWon}`;
 }

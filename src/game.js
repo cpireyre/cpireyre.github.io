@@ -27,11 +27,13 @@ const G = {
         x: 0,
         z: 0
     },
+    bestOf: 3,
     countdown: 0,
     height: 15,
     p1: {
         height: 2.6,
         name: "Player 1",
+        roundsWon: 0,
         score: 0,
         speed: 20,
         width: 0.2,
@@ -41,6 +43,7 @@ const G = {
     p2: {
         height: 2.6,
         name: "Player 2",
+        roundsWon: 0,
         score: 0,
         speed: 20,
         width: 0.2,
@@ -105,6 +108,8 @@ function movePlayers(G, delta_ms, keys_down) {
 function update(G, delta_ms, keys_down) {
     switch (G.state) {
     case STATES.WAITING:
+        G.p1.roundsWon = 0;
+        G.p2.roundsWon = 0;
         movePlayers(G, delta_ms, keys_down);
         break;
     case STATES.PLAYING:
@@ -140,13 +145,22 @@ function update(G, delta_ms, keys_down) {
             G.ball.dir.x = (-1) ** (G.p1.score + G.p2.score);
             G.ball.dir.z = 0;
         }
-        // This logic needs to move to a transition state
         if (Math.max(G.p1.score, G.p2.score) >= G.winningScore) {
+            if (G.p1.score > G.p2.score) {
+                G.p1.roundsWon += 1;
+            } else {
+                G.p2.roundsWon += 1;
+            }
+            G.p1.score = 0;
+            G.p2.score = 0;
+        }
+        // This logic needs to move to a transition state
+        if (Math.max(G.p1.roundsWon, G.p2.roundsWon) >= G.bestOf / 2) {
             G.state = STATES.GAME_OVER;
             // setTimeout(() => G.state = STATES.START, 3000);
             xhrPost("https://echo.free.beeceptor.com", {
-                P1: G.p1.score,
-                P2: G.p2.score
+                P1: G.p1.roundsWon,
+                P2: G.p2.roundsWon
             });
         }
         break;
